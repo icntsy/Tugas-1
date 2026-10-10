@@ -1,0 +1,1 @@
+console.log("Aplikasi Front-End SITTA UT Berjalan Normal.");

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Pengiriman - SITTA UT</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Style Tambahan Khusus Tampilan Tracking */
+        .tracking-card {
+            background-color: #3f51b5;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .tracking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+        .timeline-container {
+            margin-top: 25px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .timeline-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        /* Garis Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 20px;
+            list-style: none;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 5px;
+            bottom: 5px;
+            width: 2px;
+            background-color: #f1c40f;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -19px;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #f1c40f;
+            border: 2px solid white;
+        }
+        .timeline-content {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+        .timeline-desc {
+            color: #444;
+            white-space: pre-line;
+        }
+        .timeline-time {
+            color: #777;
+            text-align: right;
+            min-width: 130px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><b>SITTA UT</b></div>
+        <ul class="nav-links">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="stok.html">Informasi Bahan Ajar</a></li>
+            <li><a href="tracking.html" class="active">Tracking Pengiriman</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)">Laporan ▾</a>
+                <div class="dropdown-content">
+                    <a href="#">Monitoring Progress DO Bahan Ajar</a>
+                    <a href="#">Rekap Bahan Ajar</a>
+                </div>
+            </li>
+            <li><a href="#">Histori Transaksi Bahan Ajar</a></li>
+            <li><a href="index.html" style="color: #e74c3c;">Keluar</a></li>
+        </ul>
+    </nav>
+
+    <div class="content" style="max-width: 700px; margin: auto;">
+        <h2>Tracking Pengiriman Bahan Ajar</h2>
+        <div style="margin: 20px 0; display: flex; gap: 10px;">
+            <input type="text" id="noDoInput" placeholder="No. DO/Billing (Cth: 18503984974)" style="padding: 10px; flex: 1; border: 1px solid #ccc; border-radius: 4px;">
+            <button onclick="cariTracking()" class="btn-primary" style="width: 100px; margin-top: 0;">Cari</button>
+        </div>
+
+        <!-- Hasil Tracking -->
+        <div id="hasilTracking" style="display: none;">
+            <!-- Card Biru Utama -->
+            <div class="tracking-card">
+                <div class="tracking-header">
+                    <div>
+                        <h3 id="resNama" style="font-size: 16px; margin-bottom: 4px;"></h3>
+                        <span id="resNoDo" style="font-size: 14px; opacity: 0.9;"></span>
+                    </div>
+                    <div id="resTgl" style="font-size: 12px; text-align: right; opacity: 0.9;"></div>
+                </div>
+                <div style="font-size: 13px; line-height: 1.5;">
+                    <div id="resRute" style="font-weight: bold; margin-bottom: 4px;"></div>
+                    <div id="resAlamat"></div>
+                </div>
+            </div>
+
+            <!-- Timeline Perjalanan Paket -->
+            <div class="timeline-container">
+                <div class="timeline-title">Perjalanan Paket</div>
+                <ul class="timeline" id="timelineList">
+                    <!-- Data timeline dirender via JS -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script>
+        function cariTracking() {
+            const noDo = document.getElementById('noDoInput').value.trim();
+            const hasilDiv = document.getElementById('hasilTracking');
+
+            if(dataTracking[noDo]) {
+                const data = dataTracking[noDo];
+                document.getElementById('resNama').innerText = data.namaMahasiswa;
+                document.getElementById('resNoDo').innerText = data.noDo;
+                document.getElementById('resTgl').innerText = data.tanggal;
+                document.getElementById('resRute').innerText = data.rute;
+                document.getElementById('resAlamat').innerText = data.alamat;
+
+                // Render Timeline Riwayat
+                const timelineList = document.getElementById('timelineList');
+                timelineList.innerHTML = "";
+                data.riwayat.forEach(item => {
+                    timelineList.innerHTML += `
+                        <li class="timeline-item">
+                            <div class="timeline-content">
+                                <div class="timeline-desc">${item.status}</div>
+                                <div class="timeline-time">${item.waktu}</div>
+                            </div>
+                        </li>
+                    `;
+                });
+
+                hasilDiv.style.display = 'block';
+            } else {
+                alert("Nomor DO/Billing tidak ditemukan!");
+                hasilDiv.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

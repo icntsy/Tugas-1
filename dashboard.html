@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SITTA UT</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><b>SITTA UT</b></div>
+        <ul class="nav-links">
+            <li><a href="dashboard.html" class="active">Dashboard</a></li>
+            <li><a href="stok.html">Informasi Bahan Ajar</a></li>
+            <li><a href="tracking.html">Tracking Pengiriman</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)">Laporan ▾</a>
+                <div class="dropdown-content">
+                    <a href="#">Monitoring Progress DO Bahan Ajar</a>
+                    <a href="#">Rekap Bahan Ajar</a>
+                </div>
+            </li>
+            <li><a href="#">Histori Transaksi Bahan Ajar</a></li>
+            <li><a href="index.html" style="color: #e74c3c;">Keluar</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <h2>Dashboard Aplikasi SITTA</h2>
+        <p id="greetingMessage" style="font-size: 18px; margin-top: 10px; font-weight: bold; color: #555;"></p>
+    </div>
+
+    <script>
+        const hours = new Date().getHours();
+        let greeting = "Selamat malam";
+
+        if (hours >= 4 && hours < 11) {
+            greeting = "Selamat pagi";
+        } else if (hours >= 11 && hours < 15) {
+            greeting = "Selamat siang";
+        } else if (hours >= 15 && hours < 18) {
+            greeting = "Selamat sore";
+        }
+
+        document.getElementById('greetingMessage').innerText = `${greeting}, Pengguna SITTA.`;
+    </script>
+</body>
+</html>

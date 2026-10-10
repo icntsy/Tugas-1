@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stok Bahan Ajar - SITTA UT</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .img-buku {
+            width: 50px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .upload-group {
+            margin-top: 10px;
+            grid-column: span 3;
+            background: #fafafa;
+            padding: 10px;
+            border: 1px dashed #ccc;
+            border-radius: 4px;
+        }
+        .upload-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #555;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><b>SITTA UT</b></div>
+        <ul class="nav-links">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="stok.html" class="active">Informasi Bahan Ajar</a></li>
+            <li><a href="tracking.html">Tracking Pengiriman</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)">Laporan ▾</a>
+                <div class="dropdown-content">
+                    <a href="#">Monitoring Progress DO Bahan Ajar</a>
+                    <a href="#">Rekap Bahan Ajar</a>
+                </div>
+            </li>
+            <li><a href="#">Histori Transaksi Bahan Ajar</a></li>
+            <li><a href="index.html" style="color: #e74c3c;">Keluar</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <h2>Informasi Stok Bahan Ajar</h2>
+        
+        <!-- Form Tambah Stok via DOM dengan Input File Upload -->
+        <div style="background: white; padding: 20px; border-radius: 6px; margin-top: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <h3>Tambah Baris Stok Baru (DOM Manipulation)</h3>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px;">
+                <input type="text" id="lokasi" placeholder="Kode Lokasi" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="text" id="kode" placeholder="Kode Barang" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="text" id="nama" placeholder="Nama Barang" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="text" id="jenis" placeholder="Jenis Barang" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="number" id="edisi" placeholder="Edisi" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="number" id="stok" placeholder="Jumlah Stok" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                
+                <!-- Kolom Upload Gambar Pengganti Text -->
+                <div class="upload-group">
+                    <label>Upload Foto Sampul Buku:</label>
+                    <input type="file" id="fotoFile" accept="image/*" style="width: 100%;">
+                </div>
+            </div>
+            <button onclick="tambahStok()" class="btn-primary" style="width: 150px; margin-top: 15px;">Tambah Stok</button>
+        </div>
+
+        <!-- Tabel Data -->
+        <table id="tabelStok">
+            <thead>
+                <tr>
+                    <th>Foto Sampul</th>
+                    <th>Kode Lokasi</th>
+                    <th>Kode Barang</th>
+                    <th>Nama Barang</th>
+                    <th>Jenis</th>
+                    <th>Edisi</th>
+                    <th>Stok</th>
+                </tr>
+            </thead>
+            <tbody id="bodyStok">
+                <!-- Data dimuat secara dinamis via JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script>
+        function muatTabelStok() {
+            const tbody = document.getElementById('bodyStok');
+            tbody.innerHTML = "";
+            dataBahanAjar.forEach(item => {
+                let row = `<tr>
+                    <td><img src="${item.foto}" alt="Foto Buku" class="img-buku" onerror="this.src='https://via.placeholder.com/50x70?text=No+Img'"></td>
+                    <td>${item.kodeLokasi}</td>
+                    <td>${item.kodeBarang}</td>
+                    <td>${item.namaBarang}</td>
+                    <td>${item.jenis}</td>
+                    <td>${item.edisi}</td>
+                    <td>${item.stok}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function tambahStok() {
+            const lokasi = document.getElementById('lokasi').value;
+            const kode = document.getElementById('kode').value;
+            const nama = document.getElementById('nama').value;
+            const jenis = document.getElementById('jenis').value;
+            const edisi = document.getElementById('edisi').value;
+            const stok = document.getElementById('stok').value;
+            const fileInput = document.getElementById('fotoFile');
+
+            if(!lokasi || !kode || !nama || !jenis || !edisi || !stok) {
+                alert("Semua kolom utama wajib diisi!");
+                return;
+            }
+
+            // Fungsi membaca file gambar yang di-upload
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    simpanDataBaru(e.target.result);
+                }
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                // Jika tidak upload gambar, gunakan placeholder default
+                simpanDataBaru('https://via.placeholder.com/50x70?text=Buku');
+            }
+        }
+
+        function simpanDataBaru(fotoUrl) {
+            const lokasi = document.getElementById('lokasi').value;
+            const kode = document.getElementById('kode').value;
+            const nama = document.getElementById('nama').value;
+            const jenis = document.getElementById('jenis').value;
+            const edisi = document.getElementById('edisi').value;
+            const stok = document.getElementById('stok').value;
+
+            dataBahanAjar.push({
+                kodeLokasi: lokasi,
+                kodeBarang: kode,
+                namaBarang: nama,
+                jenis: jenis,
+                edisi: parseInt(edisi),
+                stok: parseInt(stok),
+                foto: fotoUrl
+            });
+
+            muatTabelStok();
+
+            // Reset form input
+            document.getElementById('lokasi').value = '';
+            document.getElementById('kode').value = '';
+            document.getElementById('nama').value = '';
+            document.getElementById('jenis').value = '';
+            document.getElementById('edisi').value = '';
+            document.getElementById('stok').value = '';
+            document.getElementById('fotoFile').value = '';
+        }
+
+        window.onload = muatTabelStok;
+    </script>
+</body>
+</html>

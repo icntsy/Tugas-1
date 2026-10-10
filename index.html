@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SITTA UT</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <h2>Selamat Datang</h2>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="email" placeholder="Masukkan email..." required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="Masukkan password..." required>
+                </div>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+            <div class="links">
+                <a id="btnLupa">Lupa Password?</a>
+                <a id="btnDaftar">Belum Punya Akun?</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Lupa Password -->
+    <div id="modalLupa" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modalLupa')">&times;</span>
+            <h3>Reset Password</h3>
+            <p style="margin: 15px 0; font-size: 14px;">Masukkan email Anda untuk instruksi pemulihan kata sandi.</p>
+            <input type="email" placeholder="Email terdaftar..." style="width:100%; padding:8px; margin-bottom:10px;">
+            <button class="btn-primary" onclick="alert('Instruksi pemulihan telah dikirim ke email.')">Kirim</button>
+        </div>
+    </div>
+
+    <!-- Modal Daftar -->
+    <div id="modalDaftar" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modalDaftar')">&times;</span>
+            <h3>Pendaftaran Akun</h3>
+            <p style="margin: 15px 0; font-size: 14px;">Silakan hubungi admin UT-Daerah untuk pembuatan akun baru.</p>
+            <button class="btn-primary" onclick="closeModal('modalDaftar')">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if(email === "admin@ut.ac.id" && password === "123456") {
+                window.location.href = "dashboard.html";
+            } else {
+                alert("email/password yang anda masukkan salah");
+            }
+        });
+
+        const modalLupa = document.getElementById('modalLupa');
+        const modalDaftar = document.getElementById('modalDaftar');
+
+        document.getElementById('btnLupa').onclick = () => modalLupa.style.display = 'flex';
+        document.getElementById('btnDaftar').onclick = () => modalDaftar.style.display = 'flex';
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+    </script>
+</body>
+</html>
